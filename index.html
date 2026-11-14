@@ -387,9 +387,9 @@ const data=[
 ];
 
 const DEFAULT_CAMPS={
-  creator_wire:[{id:"camp_gecko",n:"Gecko Terminal",url:"https://app.creatorwire.xyz/campaigns/e0ece4ab-f8fe-48e9-8f5a-fa83e26ee782"},{id:"camp_rnt2",n:"RNT Protocol 2",url:"https://app.creatorwire.xyz/campaigns/49eebf15-05c7-4df2-97d0-6acbb2f7ba2a"},{id:"camp_fensory",n:"Fensory",url:"https://app.creatorwire.xyz/opportunities/8f591fa2-63a7-4378-a742-5b5b68946eca"}],
-  nucleus:[{id:"camp_acurast",n:"Acurast",url:"https://nucleus.codes/opportunities/acurast/"},{id:"camp_zeru",n:"Zeru Finance",url:"https://nucleus.codes/opportunities/zeruai/"}],
-  kaito:[{id:"camp_primus",n:"Primus",url:"https://kaito.ai/studio/camp_8dbabb6dfb8e"},{id:"camp_bagel",n:"Bagel",url:"https://kaito.ai/studio/camp_4cbea52c6cfa"}],
+  creator_wire:[{id:"camp_gecko",n:"Gecko Terminal",url:"https://app.creatorwire.xyz/campaigns/e0ece4ab-f8fe-48e9-8f5a-fa83e26ee782"},{id:"camp_rnt2",n:"RNT Protocol 2",url:"https://app.creatorwire.xyz/campaigns/49eebf15-05c7-4df2-97d0-6acbb2f7ba2a"},{id:"camp_fensory",n:"Fensory",url:"https://app.creatorwire.xyz/opportunities/8f591fa2-63a7-4378-a742-5b5b68946eca"},{id:"camp_grvt_earn",n:"GRVT High Yield Earn",url:"https://app.creatorwire.xyz/opportunities/c58d4871-3cd5-46bf-a694-f7fc331052f0"}],
+  nucleus:[{id:"camp_acurast",n:"Acurast",url:"https://nucleus.codes/opportunities/acurast/"},{id:"camp_zeru",n:"Zeru Finance",url:"https://nucleus.codes/opportunities/zeruai/"},{id:"camp_agenticscredit",n:"Agentics Credit",url:"https://nucleus.codes/opportunities/agenticscredit/"}],
+  kaito:[{id:"camp_primus",n:"Primus",url:"https://kaito.ai/studio/camp_8dbabb6dfb8e"},{id:"camp_bagel",n:"Bagel",url:"https://kaito.ai/studio/camp_4cbea52c6cfa"},{id:"camp_termix",n:"TermiX",url:"https://kaito.ai/studio/camp_174ded06b5ac"}],
   rarelist:[{id:"camp_rarelist_s1",n:"Rarelist Season 1",url:"https://rarelist.io/projects/rarelist-season-1"},{id:"camp_onlystreets",n:"Only Streets",url:"https://rarelist.io/projects/onlystreets"}],
   echohunt:[{id:"camp_nym_xstable",n:"Nym & XStable AI",url:"https://app.echohunt.ai/campaigns/yzilabs2"}]
 };
@@ -420,11 +420,18 @@ function avatar(name,url,sm){
   return `<span class="${cls} av-ini" style="--h:${hash}" aria-hidden="true">${esc(n.replace(/[^A-Za-z0-9]/g,"").charAt(0).toUpperCase()||n.charAt(0))}</span>`;
 }
 const DLK="redcheck_deadlines";
-const DEFAULT_DEADLINES={camp_primus:"2026-11-21",camp_acurast:"2026-12-12",camp_onlystreets:"2026-11-17",camp_nym_xstable:"2026-12-06"};
+const DEFAULT_DEADLINES={camp_gecko:"2026-11-26",camp_rnt2:"2026-11-30",camp_fensory:"2026-11-30",camp_grvt_earn:"2026-11-15",camp_acurast:"2026-12-12",camp_zeru:"2026-11-29",camp_agenticscredit:"2026-11-15",camp_primus:"2026-11-21",camp_bagel:"2026-11-21",camp_termix:"2026-11-22",camp_onlystreets:"2026-11-17",camp_nym_xstable:"2026-12-06"};
 function loadDeadlines(){try{const o=JSON.parse(localStorage.getItem(DLK)||"{}");return o&&typeof o==="object"&&!Array.isArray(o)?o:{}}catch(e){return {}}}
 let deadlines=loadDeadlines();
 let draftEnds=null;
-function endOf(id,src){src=src||deadlines;const v=Object.prototype.hasOwnProperty.call(src,id)?src[id]:(DEFAULT_DEADLINES[id]||"");return /^\d{4}-\d{2}-\d{2}$/.test(v||"")?v:""}
+/* Remote campaign list (camps.json). Red's own non-empty Ends dates (redcheck_deadlines) always win; otherwise the remote date, then the built-in default. */
+const RK="redcheck_remote_camps",DISK="redcheck_dismissed_camps",RNK="redcheck_removed_names_done";
+function loadJSON(k,f){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?f:v}catch(e){return f}}
+function validDate(v){return /^\d{4}-\d{2}-\d{2}$/.test(v||"")}
+let remote=loadJSON(RK,null);if(!remote||typeof remote!=="object"||!remote.platforms) remote=null;
+function remoteEnds(){const o={};if(remote) Object.values(remote.platforms).forEach(a=>(Array.isArray(a)?a:[]).forEach(c=>{if(c&&c.id&&validDate(c.end)) o[c.id]=c.end}));return o}
+let rEnds=remoteEnds();
+function endOf(id,src){src=src||deadlines;const u=Object.prototype.hasOwnProperty.call(src,id)?src[id]:"";if(validDate(u)) return u;if(validDate(rEnds[id])) return rEnds[id];return validDate(DEFAULT_DEADLINES[id])?DEFAULT_DEADLINES[id]:""}
 function dayNum(s){const [y,m,d]=s.split("-").map(Number);return Math.round(Date.UTC(y,m-1,d)/864e5)}
 function deadlineInfo(id){
   const e=endOf(id);if(!e) return null;
@@ -522,7 +529,54 @@ function loadOpen(){
   }catch(e){return {}}
 }
 function saveOpen(){localStorage.setItem(OK,JSON.stringify(openCamps))}
-function visibleCamps(it){return (it.camps||[]).filter(c=>(c.n||"").trim())}
+function visibleCamps(it){return (it.camps||[]).filter(c=>{if(!(c.n||"").trim()) return false;const di=deadlineInfo(c.id);return !(di&&di.n<-2)})}
+function managedIds(){const s=new Set();Object.values(DEFAULT_CAMPS).forEach(a=>a.forEach(c=>s.add(c.id)));if(remote) Object.values(remote.platforms).forEach(a=>(Array.isArray(a)?a:[]).forEach(c=>{if(c&&c.id) s.add(c.id)}));return s}
+function allCampIds(lay){const s=new Set();lay.forEach(sec=>groupsOf(sec).forEach(g=>(g.items||[]).forEach(it=>(it.camps||[]).forEach(c=>s.add(c.id)))));return s}
+function normName(n){return String(n||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
+/* Merge camps.json into a layout. Returns true when something changed. */
+function mergeRemote(lay,rem){
+  if(!rem||!rem.platforms||typeof rem.platforms!=="object") return false;
+  let changed=false;
+  const dismissed=new Set(loadJSON(DISK,[]));
+  const removed=new Set(Array.isArray(rem.removed)?rem.removed:[]);
+  const namesDone=new Set(loadJSON(RNK,[]));
+  const items={};
+  lay.forEach(sec=>groupsOf(sec).forEach(g=>(g.items||[]).forEach(it=>{if(!items[it.id]) items[it.id]=it})));
+  /* drop removed ids everywhere */
+  Object.values(items).forEach(it=>{const n=(it.camps||[]).length;it.camps=(it.camps||[]).filter(c=>!removed.has(c.id));if(it.camps.length!==n) changed=true});
+  /* one-time removal by name (for campaigns Red added by hand with his own ids) */
+  (Array.isArray(rem.removed_names)?rem.removed_names:[]).forEach(r=>{
+    if(!r||!r.platform||!r.name) return;const key=r.platform+":"+normName(r.name);if(namesDone.has(key)) return;
+    const it=items[r.platform];
+    if(it){const n=(it.camps||[]).length;it.camps=(it.camps||[]).filter(c=>!normName(c.n).includes(normName(r.name)));if(it.camps.length!==n) changed=true}
+    namesDone.add(key);
+  });
+  try{localStorage.setItem(RNK,JSON.stringify([...namesDone]))}catch(e){}
+  Object.entries(rem.platforms).forEach(([pid,list])=>{
+    const it=items[pid];if(!it||!Array.isArray(list)) return;
+    if(!Array.isArray(it.camps)) it.camps=[];
+    list.forEach(rc=>{
+      if(!rc||!rc.id||!rc.n||removed.has(rc.id)) return;
+      let c=it.camps.find(x=>x.id===rc.id);
+      if(!c){
+        /* adopt a hand-added copy with the same link or name instead of duplicating it */
+        c=it.camps.find(x=>!managedIds().has(x.id)&&((rc.url&&normUrl(x.url)&&normUrl(x.url)===normUrl(rc.url))||(normName(x.n)&&normName(x.n)===normName(rc.n))));
+        if(c){
+          if(Object.prototype.hasOwnProperty.call(deadlines,c.id)){deadlines[rc.id]=deadlines[c.id];delete deadlines[c.id];try{localStorage.setItem(DLK,JSON.stringify(deadlines))}catch(e){}}
+          c.id=rc.id;changed=true;
+        }
+      }
+      if(!c){
+        if(dismissed.has(rc.id)) return;
+        if(validDate(rc.end)&&dayNum(rc.end)-dayNum(today)<-2) return;
+        it.camps.push({id:rc.id,n:rc.n,url:rc.url||""});changed=true;return;
+      }
+      if(c.n!==rc.n){c.n=rc.n;changed=true}
+      if((rc.url||"")!==(c.url||"")&&rc.url){c.url=rc.url;changed=true}
+    });
+  });
+  return changed;
+}
 
 let layout=loadLayout();
 let pageTitle=loadTitle();
@@ -530,6 +584,15 @@ applyTitle(pageTitle);
 let openCamps=loadOpen();
 const today=new Date().toLocaleDateString("en-CA");
 const dayIn=document.getElementById("day");dayIn.value=today;
+let pendingRemote=false;
+function applyRemote(redraw){
+  if(!remote) return;
+  if(draft){pendingRemote=true;return}
+  const changed=mergeRemote(layout,remote);
+  if(changed&&localStorage.getItem(LK)){try{localStorage.setItem(LK,JSON.stringify(layout))}catch(e){}}
+  if(redraw) drawList();
+}
+applyRemote(false);
 let KEY="redcheck_"+today;
 let st=migrate(JSON.parse(localStorage.getItem(KEY)||"{}"));
 if(localStorage.getItem(KEY)) localStorage.setItem(KEY,JSON.stringify(st));
@@ -663,7 +726,7 @@ document.querySelectorAll("input[type=checkbox][data-id]").forEach(i=>i.checked=
 
 const overlay=document.getElementById("overlay");
 const edBody=document.getElementById("ed-body");
-let draft=null;
+var draft=null;
 
 function campEditor(c){
   const d=document.createElement("div");d.className="ed-camp";d.dataset.id=c.id;
@@ -769,6 +832,7 @@ function openEditor(){
 }
 function closeEditor(){
   draft=null;
+  if(pendingRemote){pendingRemote=false;applyRemote(true)}
   overlay.classList.remove("open");
   document.body.style.overflow="";
   delete document.body.dataset.editor;
@@ -779,9 +843,12 @@ document.getElementById("ed-cancel").onclick=closeEditor;
 overlay.addEventListener("click",e=>{if(e.target===overlay) closeEditor()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&overlay.classList.contains("open")) closeEditor()});
 document.getElementById("ed-save").onclick=()=>{
-  layout=normalize(draft);
+  const before=allCampIds(layout),newLay=normalize(draft),after=allCampIds(newLay),man=managedIds();
+  const dis=new Set(loadJSON(DISK,[]));before.forEach(id=>{if(man.has(id)&&!after.has(id)) dis.add(id)});after.forEach(id=>dis.delete(id));
+  try{localStorage.setItem(DISK,JSON.stringify([...dis]))}catch(e){}
+  layout=newLay;
   localStorage.setItem(LK,JSON.stringify(layout));
-  if(draftEnds){deadlines=draftEnds;localStorage.setItem(DLK,JSON.stringify(deadlines))}
+  if(draftEnds){Object.keys(draftEnds).forEach(k=>{if(!validDate(draftEnds[k])) delete draftEnds[k]});deadlines=draftEnds;localStorage.setItem(DLK,JSON.stringify(deadlines))}
   applyTitle(saveTitle(document.getElementById("ed-page-title").value));
   drawList();
   closeEditor();
@@ -798,8 +865,10 @@ document.getElementById("ed-reset").onclick=()=>{
   localStorage.removeItem(DLK);
   deadlines={};draftEnds={};
   localStorage.removeItem(TK);
+  localStorage.removeItem(DISK);
   layout=normalize(data);
-  draft=normalize(data);
+  if(remote) mergeRemote(layout,remote);
+  draft=normalize(layout);
   applyTitle(DEFAULT_TITLE);
   document.getElementById("ed-page-title").value=DEFAULT_TITLE;
   drawList();
@@ -938,6 +1007,13 @@ document.getElementById("theme").onclick=()=>setTheme(document.documentElement.d
 setTheme(document.documentElement.dataset.theme==="light"?"light":"dark");
 drawList();
 if(location.hash==="#settings") openEditor();
+/* Pull the latest campaign list. Any failure leaves the page as it was. */
+try{fetch("camps.json?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{
+  if(!j||typeof j!=="object"||!j.platforms||typeof j.platforms!=="object") return;
+  remote=j;rEnds=remoteEnds();
+  try{localStorage.setItem(RK,JSON.stringify(j))}catch(e){}
+  applyRemote(true);
+}).catch(()=>{})}catch(e){}
 document.body.dataset.ready="1";
 </script>
 </body></html>
