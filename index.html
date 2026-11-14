@@ -237,6 +237,27 @@ button.add-camp{margin:6px 0 2px;border-style:dashed;color:var(--accent);padding
   input.sec-t,input.grp-s,input.it-n,input.it-note,input.it-url,input.camp-n-in,input.camp-url-in,input.camp-end-in{font-size:16px;padding:10px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.cal h2{margin-bottom:10px}
+.cal-nav{display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0}
+.cal-nav b{font-size:14px;color:var(--ink);min-width:132px;text-align:center;font-weight:700}
+.cal-nav button{width:34px;height:34px;padding:0;border-radius:10px;font-size:17px;line-height:1;display:grid;place-items:center}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:2px 4px 6px}
+.cal-wd{text-align:center;font-size:11px;color:var(--muted);font-weight:700;padding:2px 0 4px;text-transform:uppercase}
+.cal-day{height:40px;border-radius:10px;background:var(--soft);border:1px solid transparent;color:var(--ink2);font-size:13.5px;font-weight:650;padding:0;font-family:inherit}
+.cal-day:hover{border-color:var(--accent-line)}
+.cal-day.full{background:var(--g);color:var(--accent-ink);border-color:transparent}
+.cal-day.part{background:var(--y-bg);color:var(--y);border-color:transparent}
+.cal-day.today{box-shadow:inset 0 0 0 2px var(--accent)}
+.cal-day.full.today{box-shadow:inset 0 0 0 2px var(--ink)}
+.cal-day.sel{outline:2px solid var(--ink2);outline-offset:1px}
+.cal-day.future{opacity:.45}
+.cal-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px 4px 10px;font-size:12px;color:var(--muted)}
+.legend{display:flex;gap:12px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:4px;background:var(--soft);border:1px solid var(--line)}
+.legend i.full{background:var(--g);border-color:transparent}
+.legend i.part{background:var(--y-bg);border-color:var(--y)}
+@media (max-width:600px){.cal-day{height:42px}.cal-grid{gap:5px;padding:2px 0 6px}}
 </style></head><body><div class="wrap">
 <header><div class="brand"><h1 id="page-title">Daily Checklist for <span>Sourav (Red)</span></h1><p class="tagline" id="today-label"></p></div>
 <div class="head-right">
@@ -261,6 +282,9 @@ button.add-camp{margin:6px 0 2px;border-style:dashed;color:var(--accent);padding
 <div class="done" id="done">All done for today 🔥</div>
 <div id="list"></div>
 <div class="card" id="mycard"><h2>My tasks<small></small></h2><div id="mylist"></div><button type="button" class="addmore" id="addmore">+ Add more</button></div>
+<div class="card cal" id="calcard"><h2><span>History</span><span class="cal-nav"><button type="button" id="cal-prev" title="Previous month" aria-label="Previous month">‹</button><b id="cal-label"></b><button type="button" id="cal-next" title="Next month" aria-label="Next month">›</button></span></h2>
+<div class="cal-grid" id="cal-grid"></div>
+<div class="cal-foot"><div class="legend"><span><i class="full"></i><span>All done</span></span><span><i class="part"></i><span>Partly done</span></span><span><i></i><span>Nothing ticked</span></span></div><span id="cal-sum"></span></div></div>
 <div class="foot"><span>Pick any date to see or tick that day. Ticks save on this device.</span><button type="button" id="reset">Reset today</button></div>
 </div>
 
@@ -562,7 +586,7 @@ document.getElementById("fill").style.width=p+"%";document.getElementById("pct")
 document.getElementById("count").innerHTML=d+" of "+b.length+" <span>tasks done</span>";
 document.getElementById("arc").style.strokeDashoffset=226-226*p/100;document.getElementById("done").style.display=p===100?"block":"none";
 document.querySelectorAll(".card").forEach(c=>{const xs=[...c.querySelectorAll('input[type=checkbox]')];const sm=c.querySelector("h2 small");if(sm){const k=xs.filter(i=>i.checked).length;sm.textContent=k+" / "+xs.length;sm.classList.toggle("full",xs.length>0&&k===xs.length)}});
-markDay(KEY.slice(9),b.length>0&&d===b.length);}
+markDay(KEY.slice(9),b.length>0&&d===b.length);if(calReady) drawCal();}
 const DK="redcheck_done_days";
 function loadDone(){try{const o=JSON.parse(localStorage.getItem(DK)||"{}");return o&&typeof o==="object"&&!Array.isArray(o)?o:{}}catch(e){return {}}}
 let doneDays=loadDone();
@@ -836,6 +860,51 @@ edBody.addEventListener("click",e=>{
 });
 
 backfillDone();
+/* Calendar history */
+let calReady=false;
+function countedIds(){
+  const ids=[];
+  layout.forEach(sec=>{if(sec.opt) return;groupsOf(sec).forEach(g=>(g.items||[]).forEach(it=>{if((it.n||"").trim()) ids.push(it.id)}))});
+  custom.forEach((x,i)=>{if(String(x).trim()) ids.push("c"+i)});
+  return ids;
+}
+function readDay(day){try{const raw=localStorage.getItem("redcheck_"+day);return raw?migrate(JSON.parse(raw)):null}catch(e){return null}}
+let calY=Number(today.slice(0,4)),calM=Number(today.slice(5,7))-1;
+function dayStatus(day,ids){
+  if(doneDays[day]) return "full";
+  const s=readDay(day);if(!s) return "";
+  if(ids.length&&ids.every(id=>s[id])) return "full";
+  return Object.values(s).some(v=>v===true)?"part":"";
+}
+function pad2(n){return String(n).padStart(2,"0")}
+function drawCal(){
+  const grid=document.getElementById("cal-grid");if(!grid) return;
+  const first=new Date(calY,calM,1,12);
+  document.getElementById("cal-label").textContent=first.toLocaleDateString("en-US",{month:"long",year:"numeric"});
+  const days=new Date(calY,calM+1,0).getDate(),lead=first.getDay();
+  const sel=dayIn.value||today,real=new Date().toLocaleDateString("en-CA"),ids=countedIds();
+  let html=["S","M","T","W","T","F","S"].map(w=>`<span class="cal-wd">${w}</span>`).join("");
+  for(let i=0;i<lead;i++) html+=`<span class="cal-pad"></span>`;
+  let full=0;
+  for(let d=1;d<=days;d++){
+    const key=`${calY}-${pad2(calM+1)}-${pad2(d)}`;
+    const stc=key>real?"":dayStatus(key,ids);
+    if(stc==="full") full++;
+    const label=new Date(calY,calM,d,12).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})+(stc==="full"?", all done":stc==="part"?", partly done":"");
+    html+=`<button type="button" class="cal-day ${stc}${key===real?" today":""}${key===sel?" sel":""}${key>real?" future":""}" data-day="${key}" aria-label="${label}" title="${label}">${d}</button>`;
+  }
+  grid.innerHTML=html;
+  document.getElementById("cal-sum").textContent=full===1?"1 full day this month":`${full} full days this month`;
+}
+document.getElementById("cal-prev").onclick=()=>{calM--;if(calM<0){calM=11;calY--}drawCal()};
+document.getElementById("cal-next").onclick=()=>{calM++;if(calM>11){calM=0;calY++}drawCal()};
+document.getElementById("cal-grid").addEventListener("click",e=>{
+  const b=e.target.closest(".cal-day");if(!b) return;
+  dayIn.value=b.dataset.day;dayIn.dispatchEvent(new Event("change",{bubbles:true}));
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+dayIn.addEventListener("change",()=>{const v=dayIn.value||today;calY=Number(v.slice(0,4));calM=Number(v.slice(5,7))-1;drawCal()});
+calReady=true;
 document.getElementById("today-label").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
 function setTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem("redcheck_theme",t)}catch(e){}const m=document.querySelector('meta[name=theme-color]');if(m) m.content=t==="light"?"#f3f6f5":"#0a0d0c"}
 document.getElementById("theme").onclick=()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light");
