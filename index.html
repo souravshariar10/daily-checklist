@@ -610,7 +610,7 @@ mylist.appendChild(d)})}
 document.getElementById("addmore").onclick=()=>{custom.push("");saveC();drawC();upd();const a=mylist.querySelectorAll('input[type=text]');a[a.length-1].focus()};
 drawC();
 
-function upd(){const b=[...document.querySelectorAll('#list input[type=checkbox]:not([data-opt]):not([data-empty="1"]), #mylist input[type=checkbox]:not([data-empty="1"])')];const d=b.filter(x=>x.checked).length;const p=b.length?Math.round(d/b.length*100):0;
+function upd(){const b=[...document.querySelectorAll('#list input[type=checkbox]:not([data-opt]):not([data-empty="1"])')];const d=b.filter(x=>x.checked).length;const p=b.length?Math.round(d/b.length*100):0;
 document.getElementById("fill").style.width=p+"%";document.getElementById("pct").textContent=p+"%";
 document.getElementById("count").innerHTML=d+" of "+b.length+" <span>tasks done</span>";
 document.getElementById("arc").style.strokeDashoffset=226-226*p/100;document.getElementById("done").style.display=p===100?"block":"none";
@@ -635,7 +635,6 @@ function drawStreak(){const n=streakNow();const el=document.getElementById("stre
 function backfillDone(){
   if(localStorage.getItem("redcheck_streak_init")) return;
   const ids=[];layout.forEach(sec=>{if(sec.opt) return;groupsOf(sec).forEach(g=>(g.items||[]).forEach(it=>{if((it.n||"").trim()) ids.push(it.id)}))});
-  custom.forEach((t,i)=>{if(String(t).trim()) ids.push("c"+i)});
   if(!ids.length) return;
   for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);const m=/^redcheck_(\d{4}-\d{2}-\d{2})$/.exec(k||"");if(!m||doneDays[m[1]]) continue;
     try{const s=migrate(JSON.parse(localStorage.getItem(k)||"{}"));if(ids.every(id=>s[id])) doneDays[m[1]]=1}catch(e){}}
@@ -894,7 +893,6 @@ let calReady=false;
 function countedIds(){
   const ids=[];
   layout.forEach(sec=>{if(sec.opt) return;groupsOf(sec).forEach(g=>(g.items||[]).forEach(it=>{if((it.n||"").trim()) ids.push(it.id)}))});
-  custom.forEach((x,i)=>{if(String(x).trim()) ids.push("c"+i)});
   return ids;
 }
 function readDay(day){try{const raw=localStorage.getItem("redcheck_"+day);return raw?migrate(JSON.parse(raw)):null}catch(e){return null}}
