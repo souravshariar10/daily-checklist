@@ -529,7 +529,7 @@ function loadOpen(){
   }catch(e){return {}}
 }
 function saveOpen(){localStorage.setItem(OK,JSON.stringify(openCamps))}
-function visibleCamps(it){return (it.camps||[]).filter(c=>{if(!(c.n||"").trim()) return false;const di=deadlineInfo(c.id);return !(di&&di.n<-2)})}
+function visibleCamps(it){return (it.camps||[]).filter(c=>{if(!(c.n||"").trim()) return false;const di=deadlineInfo(c.id);return !(di&&di.n<0)})}
 function managedIds(){const s=new Set();Object.values(DEFAULT_CAMPS).forEach(a=>a.forEach(c=>s.add(c.id)));if(remote) Object.values(remote.platforms).forEach(a=>(Array.isArray(a)?a:[]).forEach(c=>{if(c&&c.id) s.add(c.id)}));return s}
 function allCampIds(lay){const s=new Set();lay.forEach(sec=>groupsOf(sec).forEach(g=>(g.items||[]).forEach(it=>(it.camps||[]).forEach(c=>s.add(c.id)))));return s}
 function normName(n){return String(n||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
@@ -568,7 +568,7 @@ function mergeRemote(lay,rem){
       }
       if(!c){
         if(dismissed.has(rc.id)) return;
-        if(validDate(rc.end)&&dayNum(rc.end)-dayNum(today)<-2) return;
+        if(validDate(rc.end)&&dayNum(rc.end)-dayNum(today)<0) return;
         it.camps.push({id:rc.id,n:rc.n,url:rc.url||""});changed=true;return;
       }
       if(c.n!==rc.n){c.n=rc.n;changed=true}

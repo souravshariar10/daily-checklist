@@ -28,7 +28,7 @@ The site reads `camps.json` every time it loads (cache-busted), so to update Red
 2. Name and link are kept in sync with the file.
 3. Dates: a non-empty Ends date that Red set himself in Customize wins. Otherwise the date comes from `end`, then from `DEFAULT_DEADLINES`.
 4. If Red deletes a managed campaign in Customize, it goes into the `redcheck_dismissed_camps` list and is not added back. Reset to default clears that list.
-5. Campaigns more than 2 days past their end are hidden from the main list but stay visible in Customize. Ended campaigns are not added again.
+5. Campaigns are hidden from the day after their end date from the main list but stay visible in Customize. Ended campaigns are not added again.
 6. If the fetch fails, the last fetched copy (`redcheck_remote_camps`) and then the built-in defaults are used.
 
 ## Checklist for an update
