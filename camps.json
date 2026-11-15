@@ -1,33 +1,95 @@
 {
-  "updated": "2026-11-15T02:30:00+06:00",
+  "updated": "2026-11-16T05:50:00+06:00",
   "platforms": {
     "creator_wire": [
-      {"id": "camp_gecko", "n": "Gecko Terminal", "url": "https://app.creatorwire.xyz/campaigns/e0ece4ab-f8fe-48e9-8f5a-fa83e26ee782", "end": "2026-11-26"},
-      {"id": "camp_rnt2", "n": "RNT Protocol 2", "url": "https://app.creatorwire.xyz/campaigns/49eebf15-05c7-4df2-97d0-6acbb2f7ba2a", "end": "2026-11-30"},
-      {"id": "camp_fensory", "n": "Fensory", "url": "https://app.creatorwire.xyz/opportunities/8f591fa2-63a7-4378-a742-5b5b68946eca", "end": "2026-11-30"},
-      {"id": "camp_grvt_earn", "n": "GRVT High Yield Earn", "url": "https://app.creatorwire.xyz/opportunities/c58d4871-3cd5-46bf-a694-f7fc331052f0", "end": "2026-11-15"}
+      {
+        "id": "camp_gecko",
+        "n": "Gecko Terminal",
+        "url": "https://app.creatorwire.xyz/campaigns/e0ece4ab-f8fe-48e9-8f5a-fa83e26ee782",
+        "end": "2026-11-26"
+      },
+      {
+        "id": "camp_rnt2",
+        "n": "RNT Protocol 2",
+        "url": "https://app.creatorwire.xyz/campaigns/49eebf15-05c7-4df2-97d0-6acbb2f7ba2a",
+        "end": "2026-11-30"
+      },
+      {
+        "id": "camp_fensory",
+        "n": "Fensory",
+        "url": "https://app.creatorwire.xyz/opportunities/8f591fa2-63a7-4378-a742-5b5b68946eca",
+        "end": "2026-11-30"
+      }
     ],
     "nucleus": [
-      {"id": "camp_acurast", "n": "Acurast", "url": "https://nucleus.codes/opportunities/acurast/", "end": "2026-12-12"},
-      {"id": "camp_zeru", "n": "Zeru Finance", "url": "https://nucleus.codes/opportunities/zeruai/", "end": "2026-11-29"},
-      {"id": "camp_agenticscredit", "n": "Agentics Credit", "url": "https://nucleus.codes/opportunities/agenticscredit/", "end": "2026-11-15"}
+      {
+        "id": "camp_acurast",
+        "n": "Acurast",
+        "url": "https://nucleus.codes/opportunities/acurast/",
+        "end": "2026-12-12"
+      },
+      {
+        "id": "camp_zeru",
+        "n": "Zeru Finance",
+        "url": "https://nucleus.codes/opportunities/zeruai/",
+        "end": "2026-11-29"
+      }
     ],
     "kaito": [
-      {"id": "camp_primus", "n": "Primus", "url": "https://kaito.ai/studio/camp_8dbabb6dfb8e", "end": "2026-11-21"},
-      {"id": "camp_bagel", "n": "Bagel", "url": "https://kaito.ai/studio/camp_4cbea52c6cfa", "end": "2026-11-21"},
-      {"id": "camp_termix", "n": "TermiX", "url": "https://kaito.ai/studio/camp_174ded06b5ac", "end": "2026-11-22"}
+      {
+        "id": "camp_primus",
+        "n": "Primus",
+        "url": "https://kaito.ai/studio/camp_8dbabb6dfb8e",
+        "end": "2026-11-21"
+      },
+      {
+        "id": "camp_bagel",
+        "n": "Bagel",
+        "url": "https://kaito.ai/studio/camp_4cbea52c6cfa",
+        "end": "2026-11-21"
+      },
+      {
+        "id": "camp_termix",
+        "n": "TermiX",
+        "url": "https://kaito.ai/studio/camp_174ded06b5ac",
+        "end": "2026-11-22"
+      }
     ],
     "rarelist": [
-      {"id": "camp_rarelist_s1", "n": "Rarelist Season 1", "url": "https://rarelist.io/projects/rarelist-season-1", "end": ""},
-      {"id": "camp_onlystreets", "n": "Only Streets", "url": "https://rarelist.io/projects/onlystreets", "end": "2026-11-17"}
+      {
+        "id": "camp_rarelist_s1",
+        "n": "Rarelist Season 1",
+        "url": "https://rarelist.io/projects/rarelist-season-1",
+        "end": ""
+      },
+      {
+        "id": "camp_onlystreets",
+        "n": "Only Streets",
+        "url": "https://rarelist.io/projects/onlystreets",
+        "end": "2026-11-17"
+      }
     ],
     "echohunt": [
-      {"id": "camp_nym_xstable", "n": "Nym & XStable AI", "url": "https://app.echohunt.ai/campaigns/yzilabs2", "end": "2026-12-06"}
+      {
+        "id": "camp_nym_xstable",
+        "n": "Nym & XStable AI",
+        "url": "https://app.echohunt.ai/campaigns/yzilabs2",
+        "end": "2026-12-06"
+      }
     ]
   },
-  "removed": [],
+  "removed": [
+    "camp_grvt_earn",
+    "camp_agenticscredit"
+  ],
   "removed_names": [
-    {"platform": "creator_wire", "name": "atoma"},
-    {"platform": "kaito", "name": "starknet"}
+    {
+      "platform": "creator_wire",
+      "name": "atoma"
+    },
+    {
+      "platform": "kaito",
+      "name": "starknet"
+    }
   ]
 }
