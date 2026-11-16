@@ -389,8 +389,8 @@ const data=[
 ];
 
 const DEFAULT_CAMPS={
-  creator_wire:[{id:"camp_gecko",n:"Gecko Terminal",url:"https://app.creatorwire.xyz/campaigns/e0ece4ab-f8fe-48e9-8f5a-fa83e26ee782"},{id:"camp_rnt2",n:"RNT Protocol 2",url:"https://app.creatorwire.xyz/campaigns/49eebf15-05c7-4df2-97d0-6acbb2f7ba2a"},{id:"camp_fensory",n:"Fensory",url:"https://app.creatorwire.xyz/opportunities/8f591fa2-63a7-4378-a742-5b5b68946eca"},{id:"camp_grvt_earn",n:"GRVT High Yield Earn",url:"https://app.creatorwire.xyz/opportunities/c58d4871-3cd5-46bf-a694-f7fc331052f0"}],
-  nucleus:[{id:"camp_acurast",n:"Acurast",url:"https://nucleus.codes/opportunities/acurast/"},{id:"camp_zeru",n:"Zeru Finance",url:"https://nucleus.codes/opportunities/zeruai/"},{id:"camp_agenticscredit",n:"Agentics Credit",url:"https://nucleus.codes/opportunities/agenticscredit/"}],
+  creator_wire:[{id:"camp_gecko",n:"Gecko Terminal",url:"https://app.creatorwire.xyz/campaigns/e0ece4ab-f8fe-48e9-8f5a-fa83e26ee782"},{id:"camp_rnt2",n:"RNT Protocol 2",url:"https://app.creatorwire.xyz/campaigns/49eebf15-05c7-4df2-97d0-6acbb2f7ba2a"},{id:"camp_fensory",n:"Fensory",url:"https://app.creatorwire.xyz/opportunities/8f591fa2-63a7-4378-a742-5b5b68946eca"},{id:"camp_grvt_gold",n:"Stable Funding X GOLD on GRVT Perps",url:"https://app.creatorwire.xyz/opportunities"}],
+  nucleus:[{id:"camp_acurast",n:"Acurast",url:"https://nucleus.codes/opportunities/acurast/"},{id:"camp_zeru",n:"Zeru Finance",url:"https://nucleus.codes/opportunities/zeruai/"}],
   kaito:[{id:"camp_primus",n:"Primus",url:"https://kaito.ai/studio/camp_8dbabb6dfb8e"},{id:"camp_bagel",n:"Bagel",url:"https://kaito.ai/studio/camp_4cbea52c6cfa"},{id:"camp_termix",n:"TermiX",url:"https://kaito.ai/studio/camp_174ded06b5ac"}],
   rarelist:[{id:"camp_rarelist_s1",n:"Rarelist Season 1",url:"https://rarelist.io/projects/rarelist-season-1"},{id:"camp_onlystreets",n:"Only Streets",url:"https://rarelist.io/projects/onlystreets"}],
   echohunt:[{id:"camp_nym_xstable",n:"Nym & XStable AI",url:"https://app.echohunt.ai/campaigns/yzilabs2"}]
@@ -422,7 +422,7 @@ function avatar(name,url,sm){
   return `<span class="${cls} av-ini" style="--h:${hash}" aria-hidden="true">${esc(n.replace(/[^A-Za-z0-9]/g,"").charAt(0).toUpperCase()||n.charAt(0))}</span>`;
 }
 const DLK="redcheck_deadlines";
-const DEFAULT_DEADLINES={camp_gecko:"2026-11-26",camp_rnt2:"2026-11-30",camp_fensory:"2026-11-30",camp_grvt_earn:"2026-11-15",camp_acurast:"2026-12-12",camp_zeru:"2026-11-29",camp_agenticscredit:"2026-11-15",camp_primus:"2026-11-21",camp_bagel:"2026-11-21",camp_termix:"2026-11-22",camp_onlystreets:"2026-11-17",camp_nym_xstable:"2026-12-06"};
+const DEFAULT_DEADLINES={camp_gecko:"2026-11-26",camp_rnt2:"2026-11-30",camp_fensory:"2026-11-30",camp_grvt_gold:"2026-11-30",camp_acurast:"2026-12-12",camp_zeru:"2026-11-29",camp_primus:"2026-11-21",camp_bagel:"2026-11-21",camp_termix:"2026-11-22",camp_onlystreets:"2026-11-17",camp_nym_xstable:"2026-12-06"};
 function loadDeadlines(){try{const o=JSON.parse(localStorage.getItem(DLK)||"{}");return o&&typeof o==="object"&&!Array.isArray(o)?o:{}}catch(e){return {}}}
 let deadlines=loadDeadlines();
 let draftEnds=null;

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T05:50:00+06:00",
+  "updated": "2026-11-16T20:02:00+06:00",
   "platforms": {
     "creator_wire": [
       {
@@ -18,6 +18,12 @@
         "id": "camp_fensory",
         "n": "Fensory",
         "url": "https://app.creatorwire.xyz/opportunities/8f591fa2-63a7-4378-a742-5b5b68946eca",
+        "end": "2026-11-30"
+      },
+      {
+        "id": "camp_grvt_gold",
+        "n": "Stable Funding X GOLD on GRVT Perps",
+        "url": "https://app.creatorwire.xyz/opportunities",
         "end": "2026-11-30"
       }
     ],
